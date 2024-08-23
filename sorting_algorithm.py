@@ -3,13 +3,15 @@ import pygame
 
 pygame.init()
 
-WINDOW_SIZE = 720
-WINDOW = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
+WINDOW_WIDTH = 1100
+WINDOW_HEIGHT = 768
+WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # variables
 RECT_WIDTH = 20
 clock = pygame.time.Clock()
 FPS = 15
+num_rectangles = (WINDOW_WIDTH // RECT_WIDTH) -5
 
 # colors
 GREEN = (0, 255, 0)
@@ -45,18 +47,22 @@ class Rectangle:
 
 
 def create_rectangles():
-    num_rectangles = WINDOW_SIZE // RECT_WIDTH - 5
     rectangles = []
     heights = []
 
-    for i in range(5, num_rectangles):
-        height = random.randint(2, 50) * 10
+    total_width = num_rectangles * RECT_WIDTH
+
+    start_x = (WINDOW_WIDTH - total_width) // 2
+
+    for i in range(num_rectangles):
+        height = random.randint(7, 65) * 10
         while height in heights:
-            height = random.randint(2, 50) * 10
+            height = random.randint(7, 65) * 10
 
         heights.append(height)
-        rect = Rectangle(PURPLE, i * RECT_WIDTH, height)
+        rect = Rectangle(PURPLE, start_x + i * RECT_WIDTH, height)
         rectangles.append(rect)
+
     return rectangles
 
 
@@ -64,12 +70,14 @@ def draw_rects(rectangles):
     WINDOW.fill(GREY)
 
     for rect in rectangles:
-        pygame.draw.rect(WINDOW, rect.color, (rect.x, WINDOW_SIZE - rect.height, rect.width, rect.height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_SIZE), (rect.x, WINDOW_SIZE - rect.height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x + rect.width, WINDOW_SIZE),
-                         (rect.x + rect.width, WINDOW_SIZE - rect.height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_SIZE - rect.height),
-                         (rect.x + rect.width, WINDOW_SIZE - rect.height))
+        clamped_height = min(rect.height, WINDOW_HEIGHT)
+        pygame.draw.rect(WINDOW, rect.color, (rect.x, WINDOW_HEIGHT - clamped_height, rect.width, clamped_height))
+        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_HEIGHT), (rect.x, WINDOW_HEIGHT - rect.height))
+        pygame.draw.line(WINDOW, BLACK, (rect.x + rect.width, WINDOW_HEIGHT),
+                         (rect.x + rect.width, WINDOW_HEIGHT - rect.height))
+        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_HEIGHT - rect.height),
+                         (rect.x + rect.width, WINDOW_HEIGHT - rect.height))
+
 
 def bubble_sort(rectangles):
     num_rectangles = len(rectangles)
@@ -97,9 +105,8 @@ def bubble_sort(rectangles):
 def insertion_sort(rectangles):
     num_rectangles = len(rectangles)
     total_width = sum(rect.width for rect in rectangles)
-    screen_width = 600  # Adjusted screen width
     # Calculate the left margin to ensure equal spacing on both sides
-    margin = (screen_width - total_width) / 2
+    margin = (WINDOW_WIDTH - total_width) / 2
 
     for i in range(1, num_rectangles):
         key_rect = rectangles[i]
@@ -144,6 +151,8 @@ def merge_sort(rectangles, start=0, end=None):
         yield from merge(rectangles, start, mid, end)
 
 def merge(rectangles, start, mid, end):
+
+    original_postions = [rectangles[i].x for i in range(start, end)]
     left = rectangles[start:mid]
     right = rectangles[mid:end]
 
@@ -157,7 +166,7 @@ def merge(rectangles, start, mid, end):
             j += 1
 
         # Update x positions
-        rectangles[k].x = k * rectangles[k].width
+        rectangles[k].x = original_postions[k - start]
 
         draw_rects(rectangles)
         yield  # Pause after merging each element
@@ -167,6 +176,7 @@ def merge(rectangles, start, mid, end):
         draw_rects(rectangles)
 
 def quick_sort(rectangles, low=0, high=None):
+    global sort_complete
     if high is None:
         high = len(rectangles) - 1
 
@@ -174,6 +184,15 @@ def quick_sort(rectangles, low=0, high=None):
         p, pivot_index = yield from partition(rectangles, low, high)
         yield from quick_sort(rectangles, low, pivot_index - 1)
         yield from quick_sort(rectangles, pivot_index + 1, high)
+
+    # Sorting is complete
+    if low == 0 and high == len(rectangles) - 1:
+        sort_complete = True
+        print("Sorting is complete.")
+        for i in range(low, high+1):
+            rectangles[i].set_sorted()
+        draw_rects(rectangles)
+
 
 def partition(rectangles, low, high):
     pivot = rectangles[high]
@@ -202,6 +221,8 @@ def partition(rectangles, low, high):
 
     yield  # Pause after partitioning
     return i + 1, i + 1
+
+
 
 def selection_sort(rectangles):
     num_rectangles = len(rectangles)
@@ -237,7 +258,7 @@ def display_text(txt, y, size):
     FONT = pygame.font.SysFont('Futura', size)
 
     text = FONT.render(txt, True, BLACK)
-    text_rect = text.get_rect(center=(WINDOW_SIZE / 2, y))
+    text_rect = text.get_rect(center=(WINDOW_WIDTH / 2, y))
     WINDOW.blit(text, text_rect)
 
 

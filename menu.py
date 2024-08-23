@@ -1,10 +1,10 @@
 import pygame, sys, sorting_algorithm
-from button import Button
+from tools import Button, Slider
 
 pygame.init()
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Menu")
-
+base_font = pygame.font.Font(None, 45)
 BG = pygame.image.load("assets/dark-gradient-background-6bly12umg2d4psr2.jpg")
 
 
@@ -12,49 +12,104 @@ def get_font(size):
     return pygame.font.Font(None, size)
 
 
+def sort_menu():
+    pygame.display.set_caption("Sorting Algorithms")
+
+    while True:
+        SORT_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("black")
+
+        SORT_TEXT = get_font(45).render("Choose a sorting algorithm", True, "#FFFFFF")
+        SORT_RECT = SORT_TEXT.get_rect(center=(640, 160))
+        SCREEN.blit(SORT_TEXT, SORT_RECT)
+
+        SORT_BUBBLE = Button(image=None, pos=(640, 260), text_input="BUBBLE", font=get_font(75), base_color="White",
+                             hovering_color="Green")
+
+        SORT_BUBBLE.changeColor(SORT_MOUSE_POS)
+        SORT_BUBBLE.update(SCREEN)
+
+        SORT_INSERTION = Button(image=None, pos=(640, 310), text_input="INSERTION", font=get_font(75), base_color="White",
+                                hovering_color="Green")
+
+        SORT_INSERTION.changeColor(SORT_MOUSE_POS)
+        SORT_INSERTION.update(SCREEN)
+
+        SORT_QUICK = Button(image=None, pos=(640, 360), text_input="QUICK", font=get_font(75), base_color="White",
+                            hovering_color="Green")
+
+        SORT_QUICK.changeColor(SORT_MOUSE_POS)
+        SORT_QUICK.update(SCREEN)
+
+        SORT_MERGE = Button(image=None, pos=(640, 410), text_input="MERGE", font=get_font(75), base_color="White",
+                            hovering_color="Green")
+
+        SORT_MERGE.changeColor(SORT_MOUSE_POS)
+        SORT_MERGE.update(SCREEN)
+
+        SORT_SELECTION = Button(image=None, pos=(640, 460), text_input="SELECTION", font=get_font(75), base_color="White",
+                                hovering_color="Green")
+
+        SORT_SELECTION.changeColor(SORT_MOUSE_POS)
+        SORT_SELECTION.update(SCREEN)
+
+        SORT_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
+                           base_color="White",
+                           hovering_color="Green")
+
+        SORT_BACK.changeColor(SORT_MOUSE_POS)
+        SORT_BACK.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if SORT_BUBBLE.checkForInput(SORT_MOUSE_POS):
+                    return "Bubble"
+                if SORT_INSERTION.checkForInput(SORT_MOUSE_POS):
+                    return "Insertion"
+                if SORT_QUICK.checkForInput(SORT_MOUSE_POS):
+                    return "Quick"
+                if SORT_MERGE.checkForInput(SORT_MOUSE_POS):
+                    return "Merge"
+                if SORT_SELECTION.checkForInput(SORT_MOUSE_POS):
+                    return "Selection"
+                if SORT_BACK.checkForInput(SORT_MOUSE_POS):
+                    return "menu"
+
+        pygame.display.update()
+
+def search_menu():
+    pygame.display.set_caption("Graph searching algorithms")
+
+
+
 def play():
     pygame.display.set_caption("Play")
 
-    from sorting_algorithm import sorter
     while True:
 
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
 
         SCREEN.fill("black")
 
-        PLAY_TEXT = get_font(45).render("Choose a sorting algorithm", True, "#FFFFFF")
+        PLAY_TEXT = get_font(45).render("Choose a type of algorithm", True, "#FFFFFF")
         PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 160))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
 
-        PLAY_BUBBLE = Button(image=None, pos=(640, 260), text_input="BUBBLE", font=get_font(75), base_color="White",
+        PLAY_SORT = Button(image=None, pos=(640, 260), text_input="Sorting", font=get_font(75), base_color="White",
                            hovering_color="Green")
 
-        PLAY_BUBBLE.changeColor(PLAY_MOUSE_POS)
-        PLAY_BUBBLE.update(SCREEN)
+        PLAY_SORT.changeColor(PLAY_MOUSE_POS)
+        PLAY_SORT.update(SCREEN)
 
-        PLAY_INSERTION = Button(image=None, pos=(640, 310), text_input="INSERTION", font=get_font(75), base_color="White",
+        PLAY_SEARCH = Button(image=None, pos=(640, 310), text_input="Search", font=get_font(75), base_color="White",
                              hovering_color="Green")
 
-        PLAY_INSERTION.changeColor(PLAY_MOUSE_POS)
-        PLAY_INSERTION.update(SCREEN)
-
-        PLAY_QUICK = Button(image=None, pos=(640, 360), text_input="QUICK", font=get_font(75), base_color="White",
-                             hovering_color="Green")
-
-        PLAY_QUICK.changeColor(PLAY_MOUSE_POS)
-        PLAY_QUICK.update(SCREEN)
-
-        PLAY_MERGE = Button(image=None, pos=(640, 410), text_input="MERGE", font=get_font(75), base_color="White",
-                             hovering_color="Green")
-
-        PLAY_MERGE.changeColor(PLAY_MOUSE_POS)
-        PLAY_MERGE.update(SCREEN)
-
-        PLAY_SELECTION = Button(image=None, pos=(640, 460), text_input="SELECTION", font=get_font(75), base_color="White",
-                             hovering_color="Green")
-
-        PLAY_SELECTION.changeColor(PLAY_MOUSE_POS)
-        PLAY_SELECTION.update(SCREEN)
+        PLAY_SEARCH.changeColor(PLAY_MOUSE_POS)
+        PLAY_SEARCH.update(SCREEN)
 
         PLAY_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
                                 base_color="White",
@@ -68,16 +123,10 @@ def play():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BUBBLE.checkForInput(PLAY_MOUSE_POS):
-                    return "Bubble"
-                if PLAY_INSERTION.checkForInput(PLAY_MOUSE_POS):
-                    return "Insertion"
-                if PLAY_QUICK.checkForInput(PLAY_MOUSE_POS):
-                    return "Quick"
-                if PLAY_MERGE.checkForInput(PLAY_MOUSE_POS):
-                    return "Merge"
-                if PLAY_SELECTION.checkForInput(PLAY_MOUSE_POS):
-                    return "Selection"
+                if PLAY_SORT.checkForInput(PLAY_MOUSE_POS):
+                    return "sort"
+                if PLAY_SEARCH.checkForInput(PLAY_MOUSE_POS):
+                    return "search"
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POS):
                     return "menu"
 
@@ -86,9 +135,13 @@ def play():
 
 def options():
     pygame.display.set_caption("Options")
-    input_box = pygame.Rect(200, 150, 140, 74)
+    input_box = pygame.Rect(900, 160, 140, 40)
     input_text = ""
     active = False
+
+    max_rectangles = (sorting_algorithms.WINDOW_WIDTH // sorting_algorithms.RECT_WIDTH) - 5
+
+    slider = Slider((970, 225), (140, 30), .5, 0, 100)
 
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
@@ -99,11 +152,43 @@ def options():
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 100))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
+        OPTIONS_FPS = get_font(45).render(f"Speed: {sorting_algorithms.FPS}", True, "#000000")
+        OPTIONS_FPS_RECT = OPTIONS_TEXT.get_rect(center=(400, 175))
+        SCREEN.blit(OPTIONS_FPS, OPTIONS_FPS_RECT)
+
+        # Get the rounded value from the slider
+        slider_value = round(slider.get_value())
+        num_rectangles = int((slider_value / 100) * max_rectangles) + 5  # Scale between 5 and max_rectangles
+
+        OPTIONS_NRECTANGLES = get_font(45).render(f"Number of Rectangles: {num_rectangles}", True, "#000000")
+        OPTIONS_NRECTANGLES_RECT = OPTIONS_TEXT.get_rect(center=(400, 225))
+        SCREEN.blit(OPTIONS_NRECTANGLES, OPTIONS_NRECTANGLES_RECT)
+
+        # Render slider
+        slider.move_slider(OPTIONS_MOUSE_POS)
+        slider.render(SCREEN)
+
         OPTIONS_BACK = Button(image=None, pos=(640, 600), text_input="BACK", font=get_font(75), base_color="Black",
                               hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
+
+        text_surface = get_font(40).render(input_text, True, pygame.Color('black'))
+        text_rect = text_surface.get_rect()
+
+        if text_rect.width > input_box.width - 7:
+            text_rect.right = input_box.right - 5
+        else:
+            text_rect.right = input_box.right - 5
+        text_rect.centery = input_box.centery
+
+        clip_rect = pygame.Rect(input_box.left + 5, input_box.top, input_box.width - 7, input_box.height)
+
+        pygame.draw.rect(SCREEN, pygame.Color('gray'), input_box, 2)
+        SCREEN.set_clip(clip_rect)
+        SCREEN.blit(text_surface, text_rect)
+        SCREEN.set_clip(None)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -111,30 +196,31 @@ def options():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    sorting_algorithms.num_rectangles = num_rectangles + 5
                     return "menu"
                 if input_box.collidepoint(event.pos):
                     active = True
                 else:
                     active = False
+
+                slider.check_mouse_down(OPTIONS_MOUSE_POS)
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                slider.check_mouse_up()
+
             if event.type == pygame.KEYDOWN and active:
                 if event.key == pygame.K_BACKSPACE:
                     input_text = input_text[:-1]
                 elif event.key == pygame.K_RETURN:
-                    if input_text.isdigit():
-                        sorting_algorithm.FPS = int(input_text)
-                        print(f"Number entered: {sorting_algorithm.FPS}")
+                    if input_text.isdigit() and len(input_text) < 8:
+                        sorting_algorithms.FPS = int(input_text)
                         input_text = ""
                 elif event.unicode.isdigit():
-                    input_text += event.unicode
-
-        pygame.draw.rect(SCREEN, (200, 200, 200), input_box, 0)  # Filled rectangle
-        pygame.draw.rect(SCREEN, (0, 0, 0), input_box, 2)  # Border of the rectangle
-
-        # Render the input text
-        text_surface = get_font(45).render(input_text, True, (0, 0, 0))
-        SCREEN.blit(text_surface, (input_box.x + 10, input_box.y + 10))
+                    if len(input_text) < 7:
+                        input_text += event.unicode
 
         pygame.display.flip()
+
 
 
 def main_menu():
@@ -153,6 +239,7 @@ def main_menu():
 
         CREDIT_TEXT = get_font(40).render("By: Adrian Garza", True, "#097882")
         CREDIT_RECT = CREDIT_TEXT.get_rect(center=(1140, 700))
+
 
         PLAY_BUTTON = Button(
 

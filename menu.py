@@ -1,5 +1,5 @@
 import pygame, sys, sorting_algorithm
-from tools import Button, Slider
+from tools import Button, Slider, DropDown
 
 pygame.init()
 SCREEN = pygame.display.set_mode((1280, 720))
@@ -30,7 +30,8 @@ def sort_menu():
         SORT_BUBBLE.changeColor(SORT_MOUSE_POS)
         SORT_BUBBLE.update(SCREEN)
 
-        SORT_INSERTION = Button(image=None, pos=(640, 310), text_input="INSERTION", font=get_font(75), base_color="White",
+        SORT_INSERTION = Button(image=None, pos=(640, 310), text_input="INSERTION", font=get_font(75),
+                                base_color="White",
                                 hovering_color="Green")
 
         SORT_INSERTION.changeColor(SORT_MOUSE_POS)
@@ -48,7 +49,8 @@ def sort_menu():
         SORT_MERGE.changeColor(SORT_MOUSE_POS)
         SORT_MERGE.update(SCREEN)
 
-        SORT_SELECTION = Button(image=None, pos=(640, 460), text_input="SELECTION", font=get_font(75), base_color="White",
+        SORT_SELECTION = Button(image=None, pos=(640, 460), text_input="SELECTION", font=get_font(75),
+                                base_color="White",
                                 hovering_color="Green")
 
         SORT_SELECTION.changeColor(SORT_MOUSE_POS)
@@ -81,9 +83,9 @@ def sort_menu():
 
         pygame.display.update()
 
+
 def search_menu():
     pygame.display.set_caption("Graph searching algorithms")
-
 
 
 def play():
@@ -112,8 +114,8 @@ def play():
         PLAY_SEARCH.update(SCREEN)
 
         PLAY_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
-                                base_color="White",
-                                hovering_color="Green")
+                           base_color="White",
+                           hovering_color="Green")
 
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
@@ -134,32 +136,55 @@ def play():
 
 
 def options():
+    # variables
     pygame.display.set_caption("Options")
+
     input_box = pygame.Rect(900, 160, 140, 40)
     input_text = ""
     active = False
 
-    max_rectangles = (sorting_algorithms.WINDOW_WIDTH // sorting_algorithms.RECT_WIDTH) - 5
+    MIN = 5
+    MAX = 55
+    max_rectangles = (sorting_algorithm.WINDOW_WIDTH // sorting_algorithm.RECT_WIDTH) - 5
 
     slider = Slider((970, 225), (140, 30), .5, 0, 100)
 
+    COLOR_INACTIVE = (100, 80, 255)
+    COLOR_ACTIVE = (100, 200, 255)
+    COLOR_LIST_INACTIVE = (255, 100, 100)
+    COLOR_LIST_ACTIVE = (255, 150, 150)
+
+    # dropdown box
+
+    OPTIONS_THEME_COLOR = DropDown(
+        [COLOR_INACTIVE, COLOR_ACTIVE],
+        [COLOR_LIST_INACTIVE, COLOR_LIST_ACTIVE],
+        900, 250, 140, 50,
+        pygame.font.SysFont(None, 30),
+        "Select Theme", ["Normal", "Dark", "Light", "Dusk", "Spring", "Summer", "Fall", "Winter"])
+
+    current_theme = sorting_algorithm.THEME
+
+
+
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-
         SCREEN.fill("white")
-
+        #title
         OPTIONS_TEXT = get_font(45).render("This is Options screen.", True, "#000000")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 100))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
-        OPTIONS_FPS = get_font(45).render(f"Speed: {sorting_algorithms.FPS}", True, "#000000")
+        #FPS text
+        OPTIONS_FPS = get_font(45).render(f"Speed: {sorting_algorithm.FPS}", True, "#000000")
         OPTIONS_FPS_RECT = OPTIONS_TEXT.get_rect(center=(400, 175))
         SCREEN.blit(OPTIONS_FPS, OPTIONS_FPS_RECT)
 
         # Get the rounded value from the slider
         slider_value = round(slider.get_value())
-        num_rectangles = int((slider_value / 100) * max_rectangles) + 5  # Scale between 5 and max_rectangles
-
+        num_rectangles = max(MIN,
+                             min(MAX, int((slider_value / 100) * max_rectangles)))  # Scale between 5 and max_rectangles
+        #slider text
         OPTIONS_NRECTANGLES = get_font(45).render(f"Number of Rectangles: {num_rectangles}", True, "#000000")
         OPTIONS_NRECTANGLES_RECT = OPTIONS_TEXT.get_rect(center=(400, 225))
         SCREEN.blit(OPTIONS_NRECTANGLES, OPTIONS_NRECTANGLES_RECT)
@@ -168,9 +193,11 @@ def options():
         slider.move_slider(OPTIONS_MOUSE_POS)
         slider.render(SCREEN)
 
+
+
+        #back button
         OPTIONS_BACK = Button(image=None, pos=(640, 600), text_input="BACK", font=get_font(75), base_color="Black",
                               hovering_color="Green")
-
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
 
@@ -189,14 +216,15 @@ def options():
         SCREEN.set_clip(clip_rect)
         SCREEN.blit(text_surface, text_rect)
         SCREEN.set_clip(None)
-
-        for event in pygame.event.get():
+        event_list = pygame.event.get()
+        for event in event_list:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                    sorting_algorithms.num_rectangles = num_rectangles + 5
+                    sorting_algorithm.num_rectangles = num_rectangles
+                    sorting_algorithm.THEME = current_theme
                     return "menu"
                 if input_box.collidepoint(event.pos):
                     active = True
@@ -213,14 +241,23 @@ def options():
                     input_text = input_text[:-1]
                 elif event.key == pygame.K_RETURN:
                     if input_text.isdigit() and len(input_text) < 8:
-                        sorting_algorithms.FPS = int(input_text)
+                        sorting_algorithm.FPS = int(input_text)
                         input_text = ""
                 elif event.unicode.isdigit():
                     if len(input_text) < 7:
                         input_text += event.unicode
+        theme_option = OPTIONS_THEME_COLOR.update(event_list)
+        if theme_option >= 0:
+            current_theme = OPTIONS_THEME_COLOR.options[theme_option]
+            OPTIONS_THEME_COLOR.main = current_theme
+        OPTIONS_THEME_COLOR.draw(SCREEN)
+
+        # theme_text
+        OPTIONS_THEME = get_font(45).render(f"Sort theme: {str(current_theme)}", True, "#000000")
+        OPTIONS_THEME_RECT = OPTIONS_TEXT.get_rect(center=(400, 275))
+        SCREEN.blit(OPTIONS_THEME, OPTIONS_THEME_RECT)
 
         pygame.display.flip()
-
 
 
 def main_menu():
@@ -239,7 +276,6 @@ def main_menu():
 
         CREDIT_TEXT = get_font(40).render("By: Adrian Garza", True, "#097882")
         CREDIT_RECT = CREDIT_TEXT.get_rect(center=(1140, 700))
-
 
         PLAY_BUTTON = Button(
 
@@ -276,4 +312,3 @@ def main_menu():
                     return "quit"
 
         pygame.display.update()
-

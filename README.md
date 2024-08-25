@@ -8,7 +8,7 @@ This sorting algorithm visualizer only using pygame
 <li>Quick</li>
 <li>Selection</li>
 
-<h3>Features</h3>
+<h2>Features</h2>
 <li>Pygame GUI</li>
 <li>Options page</li>
 <li>ability to change:</li>
@@ -16,4 +16,4 @@ This sorting algorithm visualizer only using pygame
 <li>number of rectangles</li>
 <li>theme</li>
 
-<h3>Demonstrations</h3>
+<h2>Demonstrations</h2>

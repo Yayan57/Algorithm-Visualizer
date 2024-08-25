@@ -10,7 +10,7 @@ WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 # variables
 RECT_WIDTH = 20
 clock = pygame.time.Clock()
-FPS = 90
+FPS = 15
 num_rectangles = (WINDOW_WIDTH // RECT_WIDTH) -5
 THEME = "Normal"
 

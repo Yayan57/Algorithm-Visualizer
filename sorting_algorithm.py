@@ -3,26 +3,121 @@ import pygame
 
 pygame.init()
 
-WINDOW_WIDTH = 1100
-WINDOW_HEIGHT = 768
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # variables
 RECT_WIDTH = 20
 clock = pygame.time.Clock()
-FPS = 15
+FPS = 90
 num_rectangles = (WINDOW_WIDTH // RECT_WIDTH) -5
+THEME = "Normal"
 
 # colors
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
-PURPLE = (128, 0, 128)
-GREY = (170, 170, 170)
-LIGHT_BLUE = (64, 224, 208)
-RED = (255, 0, 0)
+THEME_COLORS = {
+    "Normal": {
+        "SET_SORTED": (0, 255, 0),
+        "SELECT": (0, 0, 255),
+        "LINE": (0, 0, 0),
+        "UNSELECT": (128, 0, 128),
+        "BACKGROUND": (170, 170, 170),
+        "SET_SMALLEST": (64, 224, 208),
+        "SET_LARGEST": (255, 0, 0),
+        "TEXT": (0, 0, 0)
+    },
+    "Dark": {
+        "SET_SORTED": (255, 255, 255),
+        "SELECT": (13, 161, 15),
+        "LINE": (0, 0, 0),
+        "UNSELECT": (8, 97, 9),
+        "BACKGROUND": (0, 0, 0),
+        "SET_SMALLEST": (145, 6, 6),
+        "SET_LARGEST": (207, 200, 10),
+        "TEXT": (255, 255, 255)
+    },
+    "Light": {
+        "SET_SORTED": (41, 240, 240),
+        "SELECT": (145, 156, 156),
+        "LINE": (46, 43, 43),
+        "UNSELECT": (92, 99, 99),
+        "BACKGROUND": (255, 255, 255),
+        "SET_SMALLEST": (64, 224, 208),
+        "SET_LARGEST": (255, 0, 0),
+        "TEXT": (0, 0, 0)
+    },
+    "Dusk": {
+        "SET_SORTED": (131, 131, 143),
+        "SELECT": (83, 83, 110),
+        "LINE": (105, 105, 105),
+        "UNSELECT": (46, 46, 54),
+        "BACKGROUND": (29, 29, 84),
+        "SET_SMALLEST": (64, 6, 64),
+        "SET_LARGEST": (22, 64, 6),
+        "TEXT": (159, 159, 166)
+    },
+    "Spring": {
+        "SET_SORTED": (245, 173, 148),
+        "SELECT": (245, 91, 139),
+        "LINE": (0, 0, 0),
+        "UNSELECT": (242, 245, 154),
+        "BACKGROUND": (180, 249, 165),
+        "SET_SMALLEST": (64, 224, 208),
+        "SET_LARGEST": (255, 0, 0),
+        "TEXT": (2, 209, 236)
+    },
+    "Summer": {
+        "SET_SORTED": (245, 91, 139),
+        "SELECT": (243, 135, 47),
+        "LINE": (0, 0, 0),
+        "UNSELECT": (39, 180, 110),
+        "BACKGROUND": (21, 178, 211),
+        "SET_SMALLEST": (64, 224, 208),
+        "SET_LARGEST": (255, 0, 0),
+        "TEXT": (255, 215, 0)
+    },
+    "Fall": {
+        "SET_SORTED": (184, 46, 7),
+        "SELECT": (51, 92, 103),
+        "LINE": (0, 0, 0),
+        "UNSELECT": (40, 54, 24),
+        "BACKGROUND": (96, 60, 20),
+        "SET_SMALLEST": (64, 224, 208),
+        "SET_LARGEST": (255, 0, 0),
+        "TEXT": (212, 91, 18)
+    },
+    "Winter": {
+        "SET_SORTED": (255, 255, 255),
+        "SELECT": (173, 216, 230),
+        "LINE": (105, 105, 105),
+        "UNSELECT": (176, 196, 222),
+        "BACKGROUND": (240, 255, 255),
+        "SET_SMALLEST": (175, 238, 238),
+        "SET_LARGEST": (0, 191, 255),
+        "TEXT": (176, 196, 222)
+    }
+}
+def apply_theme(theme_name):
+    global SET_SORTED, SELECT, LINE, UNSELECT, BACKGROUND, SET_SMALLEST, SET_LARGEST, TEXT
 
+    theme_colors = THEME_COLORS.get(theme_name, THEME_COLORS['Normal'])
 
+    SET_SORTED = theme_colors['SET_SORTED']
+    SELECT = theme_colors['SELECT']
+    LINE = theme_colors['LINE']
+    UNSELECT = theme_colors['UNSELECT']
+    BACKGROUND = theme_colors['BACKGROUND']
+    SET_SMALLEST = theme_colors['SET_SMALLEST']
+    SET_LARGEST = theme_colors['SET_LARGEST']
+    TEXT = theme_colors["TEXT"]
+
+# Define the theme colors globally but don't assign them until apply_theme is called
+SET_SORTED = SELECT = LINE = UNSELECT = BACKGROUND = SET_SMALLEST = SET_LARGEST = None
+
+# Apply the default theme at the beginning
+apply_theme(THEME)
+
+# Your Rectangle class and other functions can follow after this.
 class Rectangle:
     def __init__(self, color, x, height):
         self.color = color
@@ -31,51 +126,54 @@ class Rectangle:
         self.height = height
 
     def select(self):
-        self.color = BLUE
+        self.color = SELECT
 
     def unselect(self):
-        self.color = PURPLE
+        self.color = UNSELECT
 
     def set_smallest(self):
-        self.color = LIGHT_BLUE
+        self.color = SET_SMALLEST
 
     def set_sorted(self):
-        self.color = GREEN
+        self.color = SET_SORTED
 
     def set_largest(self):
-        self.color = RED
+        self.color = SET_LARGEST
 
+    @staticmethod
+    def background():
+        return BACKGROUND
 
 def create_rectangles():
     rectangles = []
     heights = []
 
     total_width = num_rectangles * RECT_WIDTH
-
     start_x = (WINDOW_WIDTH - total_width) // 2
+    apply_theme(THEME)
+    print(f"Theme is: {THEME}")
 
     for i in range(num_rectangles):
-        height = random.randint(7, 65) * 10
+        height = random.randint(1, 60) * 10
         while height in heights:
-            height = random.randint(7, 65) * 10
+            height = random.randint(1, 60) * 10
 
         heights.append(height)
-        rect = Rectangle(PURPLE, start_x + i * RECT_WIDTH, height)
+        rect = Rectangle(UNSELECT, start_x + i * RECT_WIDTH, height)
         rectangles.append(rect)
 
     return rectangles
 
-
 def draw_rects(rectangles):
-    WINDOW.fill(GREY)
+    WINDOW.fill(Rectangle.background())
 
     for rect in rectangles:
         clamped_height = min(rect.height, WINDOW_HEIGHT)
         pygame.draw.rect(WINDOW, rect.color, (rect.x, WINDOW_HEIGHT - clamped_height, rect.width, clamped_height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_HEIGHT), (rect.x, WINDOW_HEIGHT - rect.height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x + rect.width, WINDOW_HEIGHT),
+        pygame.draw.line(WINDOW, LINE, (rect.x, WINDOW_HEIGHT), (rect.x, WINDOW_HEIGHT - rect.height))
+        pygame.draw.line(WINDOW, LINE, (rect.x + rect.width, WINDOW_HEIGHT),
                          (rect.x + rect.width, WINDOW_HEIGHT - rect.height))
-        pygame.draw.line(WINDOW, BLACK, (rect.x, WINDOW_HEIGHT - rect.height),
+        pygame.draw.line(WINDOW, LINE, (rect.x, WINDOW_HEIGHT - rect.height),
                          (rect.x + rect.width, WINDOW_HEIGHT - rect.height))
 
 
@@ -257,7 +355,7 @@ def selection_sort(rectangles):
 def display_text(txt, y, size):
     FONT = pygame.font.SysFont('Futura', size)
 
-    text = FONT.render(txt, True, BLACK)
+    text = FONT.render(txt, True, TEXT)
     text_rect = text.get_rect(center=(WINDOW_WIDTH / 2, y))
     WINDOW.blit(text, text_rect)
 

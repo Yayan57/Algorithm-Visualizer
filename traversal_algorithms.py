@@ -66,12 +66,11 @@ class GUI():
                     elif key == "-":
                         self.animation_speed = int(self.animation_speed * 2) + 1
 
-                    elif key == " ":
+                    elif key == "u":
                         self.coords.generate_random_maze(gui)
 
                     elif key == "i":
                         self.coords.generate_random_checkpoints(gui)
-
                 else:
                     print(key)
 
@@ -121,17 +120,17 @@ class GUI():
 
     def box_center(self, box):
         boxX, boxY = box
-        center = ((boxX * self.box_width + (self.box_width / 2)), (boxY * self.box_width + (self.box_width / 2)))
+        center = ((boxX * self.box_width + (self.box_width / 2)), (boxY * self.box_height + (self.box_height / 2)))
         return center
 
     def draw_box(self, box, color):
         boxX, boxY = box
         pygame.draw.rect(self.win, color,
-                         (boxX * self.box_width, boxY * self.box_width, self.box_width, self.box_width))
+                         (boxX * self.box_width, boxY * self.box_height, self.box_width, self.box_height))
 
     def get_box_coords(self):
         boxX = int((self.mouse_x + 2) / self.box_width)
-        boxY = int((self.mouse_y + 2) / self.box_width)
+        boxY = int((self.mouse_y + 2) / self.box_height)
         return (boxX, boxY)
 
     def place_check_point(self, index):
@@ -201,7 +200,6 @@ class Coordinates():
     def remove_all(self):
         self.start = None
         self.end = None
-        self.check_points = []
         self.walls = []
         self.maze = []
         self.open_list = []
@@ -216,40 +214,55 @@ class Coordinates():
         self.final_path = []
 
     def largest_distance(self):
-        largest = 0
+        largest_x = 0
+        largest_y = 0
+
+        # Check walls
         for wall in self.walls:
-            if wall[0] > largest: largest = wall[0]
-            if wall[1] > largest: largest = wall[1]
+            if wall[0] > largest_x:
+                largest_x = wall[0]
+            if wall[1] > largest_y:
+                largest_y = wall[1]
+
+            # Check checkpoints
         for point in self.check_points:
-            if point[0] > largest: largest = point[0]
-            if point[1] > largest: largest = point[1]
-        return largest + 1
+            if point[0] > largest_x:
+                largest_x = point[0]
+            if point[1] > largest_y:
+                largest_y = point[1]
+
+        # Return the largest value plus one for both dimensions
+        return largest_x + 1, largest_y + 1
 
     def create_maze(self, gui):
+        largest_x, largest_y = self.largest_distance()
 
-        largest_distance = self.largest_distance()
-        grid_size = ((gui.grid_height * gui.grid_width) // 2)
-        if grid_size > largest_distance:
-            largest = grid_size
-        else:
-            largest = largest_distance
+        # Determine the size of the maze, considering grid dimensions and the largest distance
+        maze_width = max(gui.grid_width, largest_x)
+        maze_height = max(gui.grid_height, largest_y)
+        print(f"maze width: {maze_width}")
+        print(f"maze height: {maze_height}")
+        # Initialize the maze with the appropriate dimensions
+        self.maze = [[0 for x in range(maze_height)] for y in range(maze_width)]
 
-        self.maze = [[0 for x in range(largest)] for y in range(largest)]
+        # Place walls in the maze
         for wall in self.walls:
             try:
                 wall_x, wall_y = wall
-                self.maze[wall_x][wall_y] = 1
-            except:
+                if 0 <= wall_x < maze_width and 0 <= wall_y < maze_height:
+                    self.maze[wall_x][wall_y] = 1  # Note: (y, x) for row, column convention
+            except IndexError:
                 pass
 
     def generate_random_checkpoints(self, gui):
         self.check_points = []
-        for i in range(gui.grid_height * gui.grid_width):
-            if random.random() < 2 / 576:
-                checkpoint = (random.randint(0, gui.grid_width - 1),
-                              random.randint(0, gui.grid_height - 1))
-                if checkpoint not in self.check_points:
-                    self.check_points.append(checkpoint)
+        while len(self.check_points) < 2:
+            for i in range(gui.grid_height * gui.grid_width):
+                if random.random() < 1 / 576:
+                    checkpoint = (random.randint(0, gui.grid_width - 1),
+                                  random.randint(0, gui.grid_height - 1))
+                    if checkpoint not in self.check_points:
+                        self.check_points.append(checkpoint)
 
     def generate_random_maze(self, gui):
         self.walls = []
@@ -257,7 +270,7 @@ class Coordinates():
             if random.random() > .6:
                 wall = (random.randint(0, gui.grid_width - 1),
                         random.randint(0, gui.grid_height - 1))
-                if wall not in self.walls:
+                if wall not in self.walls and wall not in self.check_points:
                     self.walls.append(wall)
 
 def pathfind(maze, start, end, gui, coords, key):
@@ -387,4 +400,5 @@ X   grid to be 18 x 32
 0   keys to stop and start
 0   menu to determine the algorithm used not keys
 0   option for how many checkpoints wanted
+0   test.py works but traversal algorithms doesnt look into that
     """

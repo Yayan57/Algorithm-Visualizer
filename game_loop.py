@@ -8,9 +8,7 @@ def handle_menu():
 
 def handle_play():
     from menu import play
-    print("play")
     return play()
-
 
 def handle_options():
     from menu import options
@@ -23,6 +21,10 @@ def handle_sort():
 def handle_search():
     from menu import search_menu
     return search_menu()
+
+def handle_traversal():
+    from traversal_algorithms import run
+    return run()
 
 
 def handle_sorting_algorithm(algorithm):
@@ -38,6 +40,7 @@ def game_loop():
         "options": handle_options,
         "sort": handle_sort,
         "search": handle_search,
+        "Traversal": handle_traversal,
         "Bubble": lambda: handle_sorting_algorithm("Bubble"),
         "Insertion": lambda: handle_sorting_algorithm("Insertion"),
         "Quick": lambda: handle_sorting_algorithm("Quick"),
@@ -51,7 +54,6 @@ def game_loop():
 
         if state in state_handlers:
             state = state_handlers[state]()
-            print(f"State: {state}, continuing loop")
 
         elif state == "quit":
             run = False
@@ -69,12 +71,14 @@ game_loop()
 
 """"
 TODO:
-0   make options to be used in options page (FPS(speed):text box, amount of rectangles: slider, and rectangle color: color picker)
-0   allow text to be inputted and saved in text box
-0   center the sorting algorithms based on the width of the menu
-0   make a graph visualizer
-0   i forgot what this was supposed to be TODO remember what i wanted to add to program
-0   make the page for graph chooser before the play 
+0   split traversal algorithms to own pages
+0   fix generate random maze function
+0   get rid of draw own maze feature
+0   add buttons for the sort algorithms so it isnt just words
+0   make play page look better
+0   make options page look better
+0   make sort graphs page look better
+0   make it to when you change the theme in the options menu it changes the theme of the option menu
 
 Finished:
 X   add credit to me
@@ -83,6 +87,12 @@ X   add images for cards
 X   change main menu to actual good title
 X   fix merge algorithm
 X   fix menu 1st button press
-X   make all rectangles green at end of quick sort
+X   make all rectangles sorted at end of quick sort
 X   change window size in sorting algorithm to window height and width to make code more readable and updateable
+X   make the page for graph chooser before the play 
+X   allow text to be inputted and saved in text box
+X   center the sorting algorithms based on the width of the menu
+X  figure out why lowering the max height of the rectangles breaks the program (ans: was running out of unique heights)
+X   make options to be used in options page (FPS(speed):text box, amount of rectangles: slider, and rectangle color: drop down boxes )
+X   make a traversal visualizer
 """""

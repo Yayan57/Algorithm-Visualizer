@@ -1,5 +1,8 @@
 import pygame, sys, sorting_algorithm
+
+import traversal_algorithms
 from tools import Button, Slider, DropDown
+from traversal_algorithms import algorithm
 
 pygame.init()
 SCREEN = pygame.display.set_mode((1280, 720))
@@ -85,7 +88,68 @@ def sort_menu():
 
 
 def search_menu():
-    pygame.display.set_caption("Graph searching algorithms")
+    pygame.display.set_caption("Graph search algorithms")
+
+    while True:
+        SORT_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.fill("white")
+
+        SEARCH_TEXT = get_font(45).render("Choose a search algorithm", True, "#000000")
+        SEARCH_RECT = SEARCH_TEXT.get_rect(center=(640, 160))
+        SCREEN.blit(SEARCH_TEXT, SEARCH_RECT)
+
+        SEARCH_DFS = Button(image=None, pos=(640, 260), text_input="DFS", font=get_font(75), base_color="Black",
+                             hovering_color="Green")
+
+        SEARCH_DFS.changeColor(SORT_MOUSE_POS)
+        SEARCH_DFS.update(SCREEN)
+
+        SEARCH_BFS = Button(image=None, pos=(640, 310), text_input="BFS", font=get_font(75),
+                                base_color="Black",
+                                hovering_color="Green")
+
+        SEARCH_BFS.changeColor(SORT_MOUSE_POS)
+        SEARCH_BFS.update(SCREEN)
+
+        SEARCH_DIJKSTRA = Button(image=None, pos=(640, 360), text_input="DIJKSTRA", font=get_font(75), base_color="Black",
+                            hovering_color="Green")
+
+        SEARCH_DIJKSTRA.changeColor(SORT_MOUSE_POS)
+        SEARCH_DIJKSTRA.update(SCREEN)
+
+        SEARCH_ASTAR = Button(image=None, pos=(640, 410), text_input="ASTAR", font=get_font(75), base_color="Black",
+                            hovering_color="Green")
+
+        SEARCH_ASTAR.changeColor(SORT_MOUSE_POS)
+        SEARCH_ASTAR.update(SCREEN)
+
+        SEARCH_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
+                           base_color="White",
+                           hovering_color="Green")
+
+        SEARCH_BACK.changeColor(SORT_MOUSE_POS)
+        SEARCH_BACK.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if SEARCH_DFS.checkForInput(SORT_MOUSE_POS):
+                    traversal_algorithms.algorithm = "DFS"
+                if SEARCH_BFS.checkForInput(SORT_MOUSE_POS):
+                    traversal_algorithms.algorithm = "BFS"
+                if SEARCH_DIJKSTRA.checkForInput(SORT_MOUSE_POS):
+                    traversal_algorithms.algorithm = "DIJKSTRA"
+                if SEARCH_ASTAR.checkForInput(SORT_MOUSE_POS):
+                    traversal_algorithms.algorithm = "ASTAR"
+                if SEARCH_BACK.checkForInput(SORT_MOUSE_POS):
+                    return "menu"
+                return "Traversal"
+
+        pygame.display.update()
+
 
 
 def play():

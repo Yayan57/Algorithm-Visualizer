@@ -1,6 +1,8 @@
 import pygame
 import random
 
+algorithm = "BFS"
+num_of_checkpoints = 2
 
 class GUI():
     FPS = 60
@@ -22,7 +24,7 @@ class GUI():
         pygame.init()
         self.win = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
-        pygame.display.set_caption("Pathfinding Algorithms")
+        pygame.display.set_caption(F"Pathfinding Algorithms: {algorithm}")
 
     def main(self, running=False):
         self.clock.tick(self.FPS)
@@ -39,24 +41,20 @@ class GUI():
         pygame.display.update()
 
     def event_handle(self, running):
-        run_keys = {"q", "w", "e", "r"}
-        checkpoint_keys = {"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+        run_algos = {"DFS", "BFS", "DIJKSTRA", "ASTAR"}
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
-            elif event.type == pygame.KEYDOWN:
+
+            if event.type == pygame.KEYDOWN:
                 key = chr(event.key)
                 if not running:
-                    if key in run_keys:
-                        self.run_algorithm(key)
-                    elif key == "x":
+                    if key == "x":
                         self.coords.remove_all()
                     elif key == "z":
                         self.coords.remove_last()
-                    elif key in checkpoint_keys:
-                        self.place_check_point(key)
                     elif (key == "+" or key == "=") and self.animation_speed > 0:
                         if self.animation_speed <= 2:
                             self.animation_speed = 1
@@ -66,11 +64,11 @@ class GUI():
                     elif key == "-":
                         self.animation_speed = int(self.animation_speed * 2) + 1
 
-                    elif key == "u":
-                        self.coords.generate_random_maze(gui)
-
-                    elif key == "i":
-                        self.coords.generate_random_checkpoints(gui)
+                    elif key == " ":
+                        self.coords.generate_random_checkpoints(self)
+                        self.coords.generate_random_maze(self)
+                        if algorithm in run_algos:
+                            self.run_algorithm(algorithm)
                 else:
                     print(key)
 
@@ -95,7 +93,7 @@ class GUI():
     def draw_grid(self):
         for i in range(self.grid_width - 1):
             pygame.draw.rect(self.win, (0, 0, 0), (((i + 1) * self.box_width) - 2, 0, 4, self.WINDOW_HEIGHT))
-        for i in range(self.grid_height -1):
+        for i in range(self.grid_height - 1):
             pygame.draw.rect(self.win, (0, 0, 0), (0, ((i + 1) * self.box_height) - 2, self.WINDOW_WIDTH, 4))
 
     def draw_points(self):
@@ -162,13 +160,11 @@ class GUI():
             self.coords.end = None
 
     def run_algorithm(self, key):
-        self.placing_walls == False
-        self.removing_walls == False
         self.coords.remove_last()
 
         if len(self.coords.check_points) > 1:
 
-            self.coords.create_maze(gui)
+            self.coords.create_maze(self)
             check_points = self.coords.check_points[:]
             check_points = [point for point in check_points if point != "None"]
 
@@ -178,7 +174,7 @@ class GUI():
                     start = point
                     end = check_points[i + 1]
 
-                    new_path = pathfind(self.coords.maze, start, end, self, self.coords, key)
+                    new_path = pathfind(self.coords.maze, start, end, self, self.coords, key, algorithm)
                     if new_path == None:
                         new_path = []
 
@@ -240,8 +236,6 @@ class Coordinates():
         # Determine the size of the maze, considering grid dimensions and the largest distance
         maze_width = max(gui.grid_width, largest_x)
         maze_height = max(gui.grid_height, largest_y)
-        print(f"maze width: {maze_width}")
-        print(f"maze height: {maze_height}")
         # Initialize the maze with the appropriate dimensions
         self.maze = [[0 for x in range(maze_height)] for y in range(maze_width)]
 
@@ -256,7 +250,7 @@ class Coordinates():
 
     def generate_random_checkpoints(self, gui):
         self.check_points = []
-        while len(self.check_points) < 2:
+        while len(self.check_points) < num_of_checkpoints or len(self.check_points) > num_of_checkpoints + 1:
             for i in range(gui.grid_height * gui.grid_width):
                 if random.random() < 1 / 576:
                     checkpoint = (random.randint(0, gui.grid_width - 1),
@@ -273,8 +267,8 @@ class Coordinates():
                 if wall not in self.walls and wall not in self.check_points:
                     self.walls.append(wall)
 
-def pathfind(maze, start, end, gui, coords, key):
 
+def pathfind(maze, start, end, gui, coords, key, algorithm):
     start_node = Node(None, start)
     start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None, end)
@@ -292,15 +286,15 @@ def pathfind(maze, start, end, gui, coords, key):
         if count >= gui.animation_speed:
             count = 0
 
-            if key == "q": #dfs
+            if algorithm == "DFS":  # dfs
                 current_node = open_list[-1]
                 current_index = len(open_list) - 1
 
-            elif key == "w": #bfs
+            elif algorithm == "BFS":  # bfs
                 current_node = open_list[0]
                 current_index = 0
 
-            elif key == "r": #a*
+            elif algorithm == "ASTAR":  # A*
                 current_node = open_list[0]
                 current_index = 0
                 for index, item in enumerate(open_list):
@@ -308,7 +302,7 @@ def pathfind(maze, start, end, gui, coords, key):
                         current_node = item
                         current_index = index
 
-            elif key == "e":  #dijkstra
+            elif algorithm == "DIJKSTRA":  # dijkstra
                 current_node = open_list[0]
                 current_index = 0
                 for index, item in enumerate(open_list):
@@ -351,10 +345,10 @@ def pathfind(maze, start, end, gui, coords, key):
                 if False in passList:
                     continue
 
-                if key == "e":
+                if algorithm == "DIJKSTRA":
                     child.g = current_node.g + 1
 
-                elif key == "r":
+                elif algorithm == "ASTAR":
                     child.g = current_node.g + 1
                     child.h = (((abs(child.position[0] - end_node.position[0]) ** 2) +
                                 (abs(child.position[1] - end_node.position[1]) ** 2)) ** .6)
@@ -388,17 +382,31 @@ class Node():
         return self.position == other.position
 
 
-gui = GUI(Coordinates())
+"""gui = GUI(Coordinates())
 while True:
-    gui.main()
+    gui.main()"""
 
-    """
+
+def run():
+    gui = GUI(Coordinates())
+    while True:
+        gui.main()
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    print("in run function")
+                    return "menu"
+
+"""
 NOTES:
-X   grid to be 18 x 32
-0   random maze to be made every time
-0   random checkpoints to be made everytime
+
 0   keys to stop and start
-0   menu to determine the algorithm used not keys
 0   option for how many checkpoints wanted
-0   test.py works but traversal algorithms doesnt look into that
-    """
+
+X   grid to be 18 x 32
+X   test.py works but traversal algorithms doesnt look into that
+X   random maze to be made every time
+X   random checkpoints to be made everytime
+X   menu to determine the algorithm used not keys
+"""

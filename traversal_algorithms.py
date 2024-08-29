@@ -1,19 +1,100 @@
 import pygame
 import random
 
+#variables
 algorithm = "BFS"
 num_of_checkpoints = 2
+FPS = 60
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+THEME = "Normal"
+
+# colors
+THEME_COLORS = {
+    "Normal": {
+        "SEEN": (0, 0, 255),
+        "ADJACENT": (0, 255, 0),
+        "CORRECT": (255, 0, 255),
+        "WALL": (0,0,0),
+        "BACKGROUND": (255, 255, 255)
+    },
+    "Dark": {
+        "SEEN": (30, 30, 30),      # Dark gray
+        "ADJACENT": (50, 50, 50),  # Lighter gray
+        "CORRECT": (255, 69, 0),   # Orange-Red
+        "WALL": (0, 0, 0),      # Dark Indigo
+        "BACKGROUND": (30, 0, 140)    # Black
+    },
+    "Light": {
+        "SEEN": (173, 216, 230),   # Light Blue
+        "ADJACENT": (144, 238, 144),# Light Green
+        "CORRECT": (255, 182, 193),# Light Pink
+        "WALL": (211, 211, 211),   # Light Gray
+        "BACKGROUND": (255, 255, 255) # White
+    },
+    "Dusk": {
+        "SEEN": (72, 61, 139),     # Dark Slate Blue
+        "ADJACENT": (255, 140, 0), # Dark Orange
+        "CORRECT": (75, 0, 130),   # Indigo
+        "WALL": (139, 69, 19),     # Saddle Brown
+        "BACKGROUND": (70, 130, 180) # Steel Blue
+    },
+    "Spring": {
+        "SEEN": (60, 179, 113),    # Medium Sea Green
+        "ADJACENT": (255, 182, 193),# Light Pink
+        "CORRECT": (255, 255, 0),  # Yellow
+        "WALL": (34, 139, 34),     # Forest Green
+        "BACKGROUND": (240, 255, 240) # Honeydew
+    },
+    "Summer": {
+        "SEEN": (255, 215, 0),     # Gold
+        "ADJACENT": (240, 128, 128),# Light Coral
+        "CORRECT": (135, 206, 250),# Light Sky Blue
+        "WALL": (34, 139, 34),     # Forest Green
+        "BACKGROUND": (255, 250, 205) # Lemon Chiffon
+    },
+    "Fall": {
+        "SEEN": (205, 92, 92),     # Indian Red
+        "ADJACENT": (244, 164, 96),# Sandy Brown
+        "CORRECT": (255, 69, 0),   # Orange-Red
+        "WALL": (139, 69, 19),     # Saddle Brown
+        "BACKGROUND": (255, 228, 181) # Moccasin
+    },
+    "Winter": {
+        "SEEN": (176, 224, 230),   # Powder Blue
+        "ADJACENT": (70, 130, 180),# Steel Blue
+        "CORRECT": (255, 250, 250),# Snow
+        "WALL": (25, 25, 112),     # Midnight Blue
+        "BACKGROUND": (245, 245, 245) # White Smoke
+    }
+}
+
+
+def apply_theme(theme_name):
+    global SEEN_COLOR, ADJACENT_COLOR, CORRECT_COLOR, WALL_COLOR, BACKGROUND_COLOR
+
+    theme_colors = THEME_COLORS.get(theme_name, THEME_COLORS['Normal'])
+
+    SEEN_COLOR = theme_colors['SEEN']
+    ADJACENT_COLOR = theme_colors['ADJACENT']
+    CORRECT_COLOR = theme_colors['CORRECT']
+    WALL_COLOR = theme_colors['WALL']
+    BACKGROUND_COLOR = theme_colors['BACKGROUND']
+
+
+# Define the theme colors globally but don't assign them until apply_theme is called
+SEEN_COLOR = ADJACENT_COLOR = CORRECT_COLOR = WALL_COLOR = BACKGROUND_COLOR = None
+
+# Apply the default theme at the beginning
+apply_theme(THEME)
 
 class GUI():
-    FPS = 60
-    WINDOW_WIDTH = 1280
-    WINDOW_HEIGHT = 720
 
     def __init__(self, coords):
         self.grid_width = 32
         self.grid_height = 18
-        self.box_height = self.WINDOW_HEIGHT / self.grid_height
-        self.box_width = self.WINDOW_WIDTH / self.grid_width
+        self.box_height = WINDOW_HEIGHT / self.grid_height
+        self.box_width = WINDOW_WIDTH / self.grid_width
         self.coords = coords
         self.placing_walls = False
         self.removing_walls = False
@@ -22,12 +103,12 @@ class GUI():
         self.coords.maze = [[0 for x in range(self.grid_width)] for y in range(self.grid_height)]
 
         pygame.init()
-        self.win = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        self.win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption(F"Pathfinding Algorithms: {algorithm}")
 
     def main(self, running=False):
-        self.clock.tick(self.FPS)
+        self.clock.tick(FPS)
         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
 
         if not running:
@@ -40,13 +121,13 @@ class GUI():
         self.redraw()
         pygame.display.update()
 
+
     def event_handle(self, running):
         run_algos = {"DFS", "BFS", "DIJKSTRA", "ASTAR"}
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-
 
             if event.type == pygame.KEYDOWN:
                 key = chr(event.key)
@@ -72,39 +153,27 @@ class GUI():
                 else:
                     print(key)
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if not running:
-                    if event.button == 1:
-                        self.placing_walls = True
-                    elif event.button == 3:
-                        self.removing_walls = True
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    self.placing_walls = False
-                elif event.button == 3:
-                    self.removing_walls = False
 
     def redraw(self):
-        self.win.fill((255, 255, 255))
+        self.win.fill(BACKGROUND_COLOR)
         self.draw_points()
         self.draw_grid()
 
     def draw_grid(self):
         for i in range(self.grid_width - 1):
-            pygame.draw.rect(self.win, (0, 0, 0), (((i + 1) * self.box_width) - 2, 0, 4, self.WINDOW_HEIGHT))
+            pygame.draw.rect(self.win, WALL_COLOR, (((i + 1) * self.box_width) - 2, 0, 4, WINDOW_HEIGHT))
         for i in range(self.grid_height - 1):
-            pygame.draw.rect(self.win, (0, 0, 0), (0, ((i + 1) * self.box_height) - 2, self.WINDOW_WIDTH, 4))
+            pygame.draw.rect(self.win, WALL_COLOR, (0, ((i + 1) * self.box_height) - 2, WINDOW_WIDTH, 4))
 
     def draw_points(self):
         for node in self.coords.open_list:
-            self.draw_box(node.position, (0, 255, 0))
+            self.draw_box(node.position, ADJACENT_COLOR)
         for node in self.coords.closed_list:
-            self.draw_box(node.position, (0, 0, 255))
+            self.draw_box(node.position, SEEN_COLOR)
         for wall in self.coords.final_path:
-            self.draw_box(wall, (255, 0, 255))
+            self.draw_box(wall, CORRECT_COLOR)
         for wall in self.coords.walls:
-            self.draw_box(wall, (0, 0, 0))
+            self.draw_box(wall, WALL_COLOR)
         for i, point in enumerate(self.coords.check_points):
             if point != "None":
                 self.draw_box(point, (255, 30, 30))
@@ -213,38 +282,32 @@ class Coordinates():
         largest_x = 0
         largest_y = 0
 
-        # Check walls
         for wall in self.walls:
             if wall[0] > largest_x:
                 largest_x = wall[0]
             if wall[1] > largest_y:
                 largest_y = wall[1]
 
-            # Check checkpoints
         for point in self.check_points:
             if point[0] > largest_x:
                 largest_x = point[0]
             if point[1] > largest_y:
                 largest_y = point[1]
 
-        # Return the largest value plus one for both dimensions
         return largest_x + 1, largest_y + 1
 
     def create_maze(self, gui):
         largest_x, largest_y = self.largest_distance()
 
-        # Determine the size of the maze, considering grid dimensions and the largest distance
         maze_width = max(gui.grid_width, largest_x)
         maze_height = max(gui.grid_height, largest_y)
-        # Initialize the maze with the appropriate dimensions
         self.maze = [[0 for x in range(maze_height)] for y in range(maze_width)]
 
-        # Place walls in the maze
         for wall in self.walls:
             try:
                 wall_x, wall_y = wall
                 if 0 <= wall_x < maze_width and 0 <= wall_y < maze_height:
-                    self.maze[wall_x][wall_y] = 1  # Note: (y, x) for row, column convention
+                    self.maze[wall_x][wall_y] = 1
             except IndexError:
                 pass
 
@@ -286,15 +349,15 @@ def pathfind(maze, start, end, gui, coords, key, algorithm):
         if count >= gui.animation_speed:
             count = 0
 
-            if algorithm == "DFS":  # dfs
+            if algorithm == "DFS":
                 current_node = open_list[-1]
                 current_index = len(open_list) - 1
 
-            elif algorithm == "BFS":  # bfs
+            elif algorithm == "BFS":
                 current_node = open_list[0]
                 current_index = 0
 
-            elif algorithm == "ASTAR":  # A*
+            elif algorithm == "ASTAR":
                 current_node = open_list[0]
                 current_index = 0
                 for index, item in enumerate(open_list):
@@ -302,7 +365,7 @@ def pathfind(maze, start, end, gui, coords, key, algorithm):
                         current_node = item
                         current_index = index
 
-            elif algorithm == "DIJKSTRA":  # dijkstra
+            elif algorithm == "DIJKSTRA":
                 current_node = open_list[0]
                 current_index = 0
                 for index, item in enumerate(open_list):
@@ -382,9 +445,6 @@ class Node():
         return self.position == other.position
 
 
-"""gui = GUI(Coordinates())
-while True:
-    gui.main()"""
 
 
 def run():
@@ -395,15 +455,14 @@ def run():
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    print("in run function")
                     return "menu"
 
 """
 NOTES:
 
-0   keys to stop and start
-0   option for how many checkpoints wanted
+0   add themes
 
+X   option for how many checkpoints wanted
 X   grid to be 18 x 32
 X   test.py works but traversal algorithms doesnt look into that
 X   random maze to be made every time

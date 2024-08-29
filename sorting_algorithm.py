@@ -28,43 +28,43 @@ THEME_COLORS = {
     },
     "Dark": {
         "SET_SORTED": (255, 255, 255),
-        "SELECT": (13, 161, 15),
+        "SELECT": (0, 128, 0),
         "LINE": (0, 0, 0),
-        "UNSELECT": (8, 97, 9),
+        "UNSELECT": (105, 105, 105),
         "BACKGROUND": (0, 0, 0),
-        "SET_SMALLEST": (145, 6, 6),
-        "SET_LARGEST": (207, 200, 10),
+        "SET_SMALLEST": (139, 0, 0),
+        "SET_LARGEST": (255, 69, 0),
         "TEXT": (255, 255, 255)
     },
     "Light": {
-        "SET_SORTED": (41, 240, 240),
-        "SELECT": (145, 156, 156),
-        "LINE": (46, 43, 43),
-        "UNSELECT": (92, 99, 99),
+        "SET_SORTED": (173, 216, 230),
+        "SELECT": (255, 182, 193),
+        "LINE": (192, 192, 192),
+        "UNSELECT": (211, 211, 211),
         "BACKGROUND": (255, 255, 255),
-        "SET_SMALLEST": (64, 224, 208),
-        "SET_LARGEST": (255, 0, 0),
+        "SET_SMALLEST": (144, 238, 144),
+        "SET_LARGEST": (255, 160, 122),
         "TEXT": (0, 0, 0)
     },
     "Dusk": {
-        "SET_SORTED": (131, 131, 143),
-        "SELECT": (83, 83, 110),
-        "LINE": (105, 105, 105),
-        "UNSELECT": (46, 46, 54),
-        "BACKGROUND": (29, 29, 84),
-        "SET_SMALLEST": (64, 6, 64),
-        "SET_LARGEST": (22, 64, 6),
-        "TEXT": (159, 159, 166)
+        "SET_SORTED": (72, 61, 139),
+        "SELECT": (75, 0, 130),
+        "LINE": (47, 79, 79),
+        "UNSELECT": (123, 104, 238),
+        "BACKGROUND": (25, 25, 112),
+        "SET_SMALLEST": (138, 43, 226),
+        "SET_LARGEST": (255, 140, 0),
+        "TEXT": (255, 255, 255)
     },
     "Spring": {
         "SET_SORTED": (245, 173, 148),
         "SELECT": (245, 91, 139),
-        "LINE": (0, 0, 0),
-        "UNSELECT": (242, 245, 154),
+        "LINE": (34, 139, 34),
+        "UNSELECT": (98, 245, 230),
         "BACKGROUND": (180, 249, 165),
-        "SET_SMALLEST": (64, 224, 208),
-        "SET_LARGEST": (255, 0, 0),
-        "TEXT": (2, 209, 236)
+        "SET_SMALLEST": (255, 182, 193),
+        "SET_LARGEST": (240, 128, 128),
+        "TEXT": (34, 139, 34)
     },
     "Summer": {
         "SET_SORTED": (245, 91, 139),
@@ -77,26 +77,27 @@ THEME_COLORS = {
         "TEXT": (255, 215, 0)
     },
     "Fall": {
-        "SET_SORTED": (184, 46, 7),
-        "SELECT": (51, 92, 103),
-        "LINE": (0, 0, 0),
-        "UNSELECT": (40, 54, 24),
-        "BACKGROUND": (96, 60, 20),
-        "SET_SMALLEST": (64, 224, 208),
-        "SET_LARGEST": (255, 0, 0),
-        "TEXT": (212, 91, 18)
+        "SET_SORTED": (210, 105, 30),
+        "SELECT": (178, 34, 34),
+        "LINE": (139, 69, 19),
+        "UNSELECT": (165, 42, 42),
+        "BACKGROUND": (222, 184, 135),
+        "SET_SMALLEST": (244, 164, 96),
+        "SET_LARGEST": (255, 140, 0),
+        "TEXT": (139, 69, 19)
     },
     "Winter": {
-        "SET_SORTED": (255, 255, 255),
-        "SELECT": (173, 216, 230),
-        "LINE": (105, 105, 105),
-        "UNSELECT": (176, 196, 222),
-        "BACKGROUND": (240, 255, 255),
-        "SET_SMALLEST": (175, 238, 238),
+        "SET_SORTED": (255, 250, 250),
+        "SELECT": (135, 206, 250),
+        "LINE": (176, 224, 230),
+        "UNSELECT": (70, 130, 180),
+        "BACKGROUND": (240, 248, 255),
+        "SET_SMALLEST": (176, 224, 230),
         "SET_LARGEST": (0, 191, 255),
-        "TEXT": (176, 196, 222)
+        "TEXT": (70, 130, 180)
     }
 }
+
 def apply_theme(theme_name):
     global SET_SORTED, SELECT, LINE, UNSELECT, BACKGROUND, SET_SMALLEST, SET_LARGEST, TEXT
 
@@ -151,7 +152,6 @@ def create_rectangles():
     total_width = num_rectangles * RECT_WIDTH
     start_x = (WINDOW_WIDTH - total_width) // 2
     apply_theme(THEME)
-    print(f"Theme is: {THEME}")
 
     for i in range(num_rectangles):
         height = random.randint(1, 60) * 10

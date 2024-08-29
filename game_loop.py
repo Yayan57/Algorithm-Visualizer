@@ -71,11 +71,7 @@ game_loop()
 
 """"
 TODO:
-0   add buttons for the sort algorithms so it isnt just words
-0   add buttons for the search algorithms so it isnt just words
-0   make play page look better
-0   make options page look better
-0   make sort graphs page look better
+
 
 Finished:
 X   add credit to me
@@ -96,4 +92,9 @@ X   split traversal algorithms to own pages
 X   fix generate random maze function
 X   get rid of draw own maze feature
 X   create themes for search
+X   add buttons for the sort algorithms so it isnt just words
+X   add buttons for the search algorithms so it isnt just words
+X   make play page look better
+X   make options page look better
+X   make sort graphs page look better
 """""

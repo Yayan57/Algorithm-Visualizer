@@ -31,39 +31,39 @@ def sort_menu():
         SORT_RECT = SORT_TEXT.get_rect(center=(640, 160))
         SCREEN.blit(SORT_TEXT, SORT_RECT)
 
-        SORT_BUBBLE = Button(image=None, pos=(640, 260), text_input="BUBBLE", font=get_font(75), base_color="White",
+        SORT_BUBBLE = Button(image=pygame.image.load("assets/Bubble.png"), pos=(150, 400), text_input="", font=get_font(75), base_color="White",
                              hovering_color="Green")
 
         SORT_BUBBLE.changeColor(SORT_MOUSE_POS)
         SORT_BUBBLE.update(SCREEN)
 
-        SORT_INSERTION = Button(image=None, pos=(640, 310), text_input="INSERTION", font=get_font(75),
+        SORT_INSERTION = Button(image=pygame.image.load("assets/insertion.webp"), pos=(400, 400), text_input="", font=get_font(75),
                                 base_color="White",
                                 hovering_color="Green")
 
         SORT_INSERTION.changeColor(SORT_MOUSE_POS)
         SORT_INSERTION.update(SCREEN)
 
-        SORT_QUICK = Button(image=None, pos=(640, 360), text_input="QUICK", font=get_font(75), base_color="White",
+        SORT_QUICK = Button(image=pygame.image.load("assets/quick.png"), pos=(650, 400), text_input="", font=get_font(75), base_color="White",
                             hovering_color="Green")
 
         SORT_QUICK.changeColor(SORT_MOUSE_POS)
         SORT_QUICK.update(SCREEN)
 
-        SORT_MERGE = Button(image=None, pos=(640, 410), text_input="MERGE", font=get_font(75), base_color="White",
+        SORT_MERGE = Button(image=pygame.image.load("assets/merge.png"), pos=(900, 400), text_input="", font=get_font(75), base_color="White",
                             hovering_color="Green")
 
         SORT_MERGE.changeColor(SORT_MOUSE_POS)
         SORT_MERGE.update(SCREEN)
 
-        SORT_SELECTION = Button(image=None, pos=(640, 460), text_input="SELECTION", font=get_font(75),
+        SORT_SELECTION = Button(image=pygame.image.load("assets/selection.png"), pos=(1150, 400), text_input="", font=get_font(75),
                                 base_color="White",
                                 hovering_color="Green")
 
         SORT_SELECTION.changeColor(SORT_MOUSE_POS)
         SORT_SELECTION.update(SCREEN)
 
-        SORT_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
+        SORT_BACK = Button(image=None, pos=(640, 600), text_input="BACK", font=get_font(75),
                            base_color="White",
                            hovering_color="Green")
 
@@ -174,19 +174,19 @@ def play():
         PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 160))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
 
-        PLAY_SORT = Button(image=None, pos=(640, 260), text_input="Sorting", font=get_font(75), base_color="White",
+        PLAY_SORT = Button(image=pygame.image.load("assets/sort.png"), pos=(490, 400), text_input="", font=get_font(75), base_color="White",
                            hovering_color="Green")
 
         PLAY_SORT.changeColor(PLAY_MOUSE_POS)
         PLAY_SORT.update(SCREEN)
 
-        PLAY_SEARCH = Button(image=None, pos=(640, 310), text_input="Search", font=get_font(75), base_color="White",
+        PLAY_SEARCH = Button(image=pygame.image.load("assets/search.png"), pos=(790, 400), text_input="", font=get_font(75), base_color="White",
                              hovering_color="Green")
 
         PLAY_SEARCH.changeColor(PLAY_MOUSE_POS)
         PLAY_SEARCH.update(SCREEN)
 
-        PLAY_BACK = Button(image=None, pos=(640, 560), text_input="BACK", font=get_font(75),
+        PLAY_BACK = Button(image=None, pos=(640, 600), text_input="BACK", font=get_font(75),
                            base_color="White",
                            hovering_color="Green")
 
@@ -216,7 +216,7 @@ def options():
     input_text_speed = ""
     active_speed = False
 
-    input_box_checkpoint_speed = pygame.Rect(900, 300, 140, 40)
+    input_box_checkpoint_speed = pygame.Rect(230, 400, 140, 40)
     input_text_checkpoint_speed = ""
     active_checkpoint_speed = False
 
@@ -227,7 +227,7 @@ def options():
     slider = Slider((970, 225), (140, 30), .5, 0, 100)
 
     # Slider for checkpoints (ranges from 1 to 9)
-    slider_checkpoint = Slider((970, 375), (140, 30), 1, 1, 9)
+    slider_checkpoint = Slider((300, 375), (140, 30), 1, 2, 9)
 
     COLOR_INACTIVE = (100, 80, 255)
     COLOR_ACTIVE = (100, 200, 255)
@@ -246,7 +246,7 @@ def options():
     OPTIONS_THEME_COLOR_SEARCH = DropDown(
         [COLOR_INACTIVE, COLOR_ACTIVE],
         [COLOR_LIST_INACTIVE, COLOR_LIST_ACTIVE],
-        900, 400, 140, 40,
+        230, 310, 140, 40,
         pygame.font.SysFont(None, 30),
         "Select Theme", ["Normal", "Dark", "Light", "Dusk", "Spring", "Summer", "Fall", "Winter"]
     )
@@ -259,13 +259,13 @@ def options():
         SCREEN.blit(OPTIONS_BG, (0, 0))
 
         # title
-        OPTIONS_TEXT = get_font(45).render("This is Options screen.", True, "#000000")
+        OPTIONS_TEXT = get_font(45).render("Options", True, "#000000")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 100))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         # FPS text
-        OPTIONS_FPS = get_font(45).render(f"Speed: {sorting_algorithm.FPS}", True, "#000000")
-        OPTIONS_FPS_RECT = OPTIONS_TEXT.get_rect(center=(400, 275))
+        OPTIONS_FPS = get_font(45).render(f"Sort Speed: {sorting_algorithm.FPS}", True, "#000000")
+        OPTIONS_FPS_RECT = OPTIONS_FPS.get_rect(center=(330, 275))
         SCREEN.blit(OPTIONS_FPS, OPTIONS_FPS_RECT)
 
         # Get the rounded value from the slider
@@ -274,7 +274,7 @@ def options():
 
         # slider text
         OPTIONS_NRECTANGLES = get_font(45).render(f"Number of Rectangles: {num_rectangles}", True, "#000000")
-        OPTIONS_NRECTANGLES_RECT = OPTIONS_TEXT.get_rect(center=(400, 225))
+        OPTIONS_NRECTANGLES_RECT = OPTIONS_NRECTANGLES.get_rect(center=(415, 225))
         SCREEN.blit(OPTIONS_NRECTANGLES, OPTIONS_NRECTANGLES_RECT)
 
         # Render slider
@@ -286,12 +286,12 @@ def options():
 
         # Checkpoints text
         OPTIONS_CHECKPOINTS = get_font(45).render(f"Number of Checkpoints: {checkpoint_value}", True, "#000000")
-        OPTIONS_CHECKPOINTS_RECT = OPTIONS_TEXT.get_rect(center=(400, 375))
+        OPTIONS_CHECKPOINTS_RECT = OPTIONS_CHECKPOINTS.get_rect(center=(850, 375))
         SCREEN.blit(OPTIONS_CHECKPOINTS, OPTIONS_CHECKPOINTS_RECT)
 
         # Checkpoints speed text
-        OPTIONS_CHECKPOINTS_SPEED = get_font(45).render(f"Traversal Speed: {traversal_algorithms.FPS}", True, "#000000")
-        OPTIONS_CHECKPOINTS_RECT_SPEED = OPTIONS_TEXT.get_rect(center=(400, 325))
+        OPTIONS_CHECKPOINTS_SPEED = get_font(45).render(f"Search Speed: {traversal_algorithms.FPS}", True, "#000000")
+        OPTIONS_CHECKPOINTS_RECT_SPEED = OPTIONS_CHECKPOINTS_SPEED.get_rect(center=(910, 425))
         SCREEN.blit(OPTIONS_CHECKPOINTS_SPEED, OPTIONS_CHECKPOINTS_RECT_SPEED)
 
         # Render checkpoint slider
@@ -374,7 +374,7 @@ def options():
 
         # theme_text
         OPTIONS_THEME_SORT = get_font(45).render(f"Sort theme: {str(current_theme_sort)}", True, "#000000")
-        OPTIONS_THEME_SORT_RECT = OPTIONS_TEXT.get_rect(center=(400, 175))
+        OPTIONS_THEME_SORT_RECT = OPTIONS_THEME_SORT.get_rect(center=(365, 175))
         SCREEN.blit(OPTIONS_THEME_SORT, OPTIONS_THEME_SORT_RECT)
 
         theme_option_search = OPTIONS_THEME_COLOR_SEARCH.update(event_list)
@@ -384,8 +384,8 @@ def options():
         OPTIONS_THEME_COLOR_SEARCH.draw(SCREEN)
 
         # theme_text
-        OPTIONS_THEME_SEARCH = get_font(45).render(f"Sort theme: {str(current_theme_search)}", True, "#000000")
-        OPTIONS_THEME_SEARCH_RECT = OPTIONS_TEXT.get_rect(center=(400, 400))
+        OPTIONS_THEME_SEARCH = get_font(45).render(f"Search theme: {str(current_theme_search)}", True, "#000000")
+        OPTIONS_THEME_SEARCH_RECT = OPTIONS_THEME_SEARCH.get_rect(center=(880, 325))
         SCREEN.blit(OPTIONS_THEME_SEARCH, OPTIONS_THEME_SEARCH_RECT)
 
         pygame.display.flip()
@@ -404,7 +404,7 @@ def main_menu():
         MENU_TEXT = get_font(100).render("Algorithm Visualizer", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(640, 150))
 
-        VERSION_TEXT = get_font(30).render("Beta", True, "#777a7a")
+        VERSION_TEXT = get_font(30).render("1.0.0", True, "#777a7a")
         VERSION_RECT = VERSION_TEXT.get_rect(center=(30, 705))
 
         CREDIT_TEXT = get_font(40).render("By: Adrian Garza", True, "#097882")

@@ -71,14 +71,11 @@ game_loop()
 
 """"
 TODO:
-0   split traversal algorithms to own pages
-0   fix generate random maze function
-0   get rid of draw own maze feature
 0   add buttons for the sort algorithms so it isnt just words
+0   add buttons for the search algorithms so it isnt just words
 0   make play page look better
 0   make options page look better
 0   make sort graphs page look better
-0   make it to when you change the theme in the options menu it changes the theme of the option menu
 
 Finished:
 X   add credit to me
@@ -92,7 +89,11 @@ X   change window size in sorting algorithm to window height and width to make c
 X   make the page for graph chooser before the play 
 X   allow text to be inputted and saved in text box
 X   center the sorting algorithms based on the width of the menu
-X  figure out why lowering the max height of the rectangles breaks the program (ans: was running out of unique heights)
+X   figure out why lowering the max height of the rectangles breaks the program (ans: was running out of unique heights)
 X   make options to be used in options page (FPS(speed):text box, amount of rectangles: slider, and rectangle color: drop down boxes )
 X   make a traversal visualizer
+X   split traversal algorithms to own pages
+X   fix generate random maze function
+X   get rid of draw own maze feature
+X   create themes for search
 """""

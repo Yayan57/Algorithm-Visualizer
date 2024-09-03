@@ -286,7 +286,6 @@ def quick_sort(rectangles, low=0, high=None):
     # Sorting is complete
     if low == 0 and high == len(rectangles) - 1:
         sort_complete = True
-        print("Sorting is complete.")
         for i in range(low, high+1):
             rectangles[i].set_sorted()
         draw_rects(rectangles)

@@ -63,7 +63,7 @@ THEME_COLORS = {
     "Winter": {
         "SEEN": (176, 224, 230),   # Powder Blue
         "ADJACENT": (70, 130, 180),# Steel Blue
-        "CORRECT": (255, 250, 250),# Snow
+        "CORRECT": (60, 61, 62),# Snow
         "WALL": (25, 25, 112),     # Midnight Blue
         "BACKGROUND": (245, 245, 245) # White Smoke
     }
@@ -85,8 +85,7 @@ def apply_theme(theme_name):
 # Define the theme colors globally but don't assign them until apply_theme is called
 SEEN_COLOR = ADJACENT_COLOR = CORRECT_COLOR = WALL_COLOR = BACKGROUND_COLOR = None
 
-# Apply the default theme at the beginning
-apply_theme(THEME)
+
 
 class GUI():
 
@@ -101,7 +100,7 @@ class GUI():
         self.animation_speed = 10
 
         self.coords.maze = [[0 for x in range(self.grid_width)] for y in range(self.grid_height)]
-
+        apply_theme(THEME)
         pygame.init()
         self.win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
@@ -157,6 +156,7 @@ class GUI():
     def redraw(self):
         self.win.fill(BACKGROUND_COLOR)
         self.draw_points()
+
         self.draw_grid()
 
     def draw_grid(self):
@@ -459,9 +459,7 @@ def run():
 
 """
 NOTES:
-
-0   add themes
-
+X   add themes
 X   option for how many checkpoints wanted
 X   grid to be 18 x 32
 X   test.py works but traversal algorithms doesnt look into that
